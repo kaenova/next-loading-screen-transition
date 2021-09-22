@@ -1,57 +1,71 @@
 import 'tailwindcss/tailwind.css'
+import './global.css'
 import React, { useState } from 'react'
 import Router from 'next/router'
-import BounceLoader from 'react-spinners/BounceLoader'
 import { motion, AnimatePresence } from 'framer-motion'
-
-function Loading(props) {
-
-  return (!props.load ?
-    <>
-
-      <motion.div className="fixed w-screen h-screen bg-red-500 z-50 flex justify-center items-center"
-        initial={{ y: 0 }}
-        animate={{ y: "-100vh" }}
-        transition={{ duration: 0.3 }}
-      >
-        <BounceLoader />
-      </motion.div>
-    </>
-
-    :
-
-    <motion.div className="fixed w-screen h-screen bg-red-500 z-50 flex justify-center items-center"
-      initial={{ y: "-100vh" }}
-      animate={{ y: 0 }}
-      transition={{ duration: 0.3 }}
-    >
-
-      <BounceLoader />
-
-    </motion.div>
-  )
-
-}
+import PageTransition from '../components/PageTransition'
 
 
 function MyApp({ Component, pageProps }) {
 
-
+  // Page Transition
   var [loading, setLoading] = useState(false)
+
+  // Root Inital Page Transition
+  var [rootPath, setRootPath] = useState(0)
 
 
   Router.events.on('routeChangeStart', () => {
+    // Untuk memastikan hanya muncul di root dan awal page
+    if (rootPath == 0 && Router.pathname === "/"){
+      setRootPath(rootPath + 1)
+    }  
     setLoading(true)
   })
 
   Router.events.on('routeChangeComplete', () => {
     setTimeout(() => { setLoading(false) }, 2000)
+    console.log(Router.pathname)
   })
 
 
   return (
     <>
-      <Loading load={loading} />
+      <motion.div
+        className="fixed w-screen h-screen bg-white z-50 flex items-center justify-center"
+        initial={{
+          y: 0
+        }}
+        animate={{
+          y: "-100vh"
+        }}
+        transition={{
+          duration: 1,
+          delay: 2,
+          ease: [0,1,.46,1] // ini kalau mau pake cubic-bezier
+        }}
+        
+      >
+        <motion.span
+        initial={{
+          opacity: 0,
+          y: "10vh"
+        }}
+        animate={{
+          opacity: 1,
+          y: 0
+        }}
+        transition={{
+          duration: 0.3,
+        }}
+        >
+        Welcome to the page
+        </motion.span>
+
+      </motion.div>
+
+      <PageTransition load={loading}/>
+
       <AnimatePresence exitBeforeEnter>
       {
         !loading &&
@@ -81,74 +95,3 @@ function MyApp({ Component, pageProps }) {
 }
 
 export default MyApp
-
-
-
-{/* {
-        loading ?
-          <motion.div
-            className="z-0"
-            initial={{
-              opacity: 1,
-              scale: 1
-            }}
-            animate={{
-              opacity: 0,
-              scale: 0.3
-            }}
-            transition={{
-              duration: 0.1,
-            }}
-          >
-            <Component {...pageProps} />
-          </motion.div>
-
-          :
-
-          <motion.div className="z-0"
-            initial={{
-              opacity:0,
-              scale: 0.3
-            }}
-            animate={{
-              opacity: 1,
-              scale: 1
-            }}
-            transition={{
-              duration:0.1,
-              delay:0.05
-            }}
-          >
-            <Component {...pageProps} />
-          </motion.div>
-
-      } */}
-
-
-
-    // <>
-    // <Loading load={loading}/>
-
-    // {loading ? 
-    // <motion.div className="fixed w-screen h-screen" 
-    // initial={{y: 0, opacity: 1, scale: 1}}
-    // animate={{y: "100vh", opacity:0, scale: 0, backgroundColor: "white"}}
-    // transition={{duration: 0.3}}
-    // >
-    //   {
-    //    afterLoad && <Component {...pageProps} /> 
-    //   }
-    // </motion.div>
-    // :
-    // <motion.div className="fixed w-screen h-screen" 
-    // initial={{y: "100vh", opacity:0, scale: 0}}
-    // animate={{y: 0, opacity: 1, scale: 1}}
-    // transition={{duration: 0.3}}
-    // >
-    //   {
-    //     afterLoad ? <Component {...pageProps} /> : <></>
-    //   }
-    // </motion.div>
-    // }
-
-    // </>
