@@ -32,9 +32,9 @@ function Content(){
 
 function InitialAnimation(props) {
   return (
-    props.activate ?
+    props.activate=="true" ?
     <motion.div
-        className={config.tailwindClass}
+        className={config.tailwindClass} 
         initial="initial"
         animate="animate"
         transition={config.motion.transition} // I can't get it working with variants. Bug?

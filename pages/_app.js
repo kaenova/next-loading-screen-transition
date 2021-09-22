@@ -1,7 +1,7 @@
 import 'tailwindcss/tailwind.css'
 import './global.css'
 import React, { useState } from 'react'
-import Router from 'next/router'
+import Router, {useRouter} from 'next/router'
 import { motion, AnimatePresence } from 'framer-motion'
 import PageTransition from '../components/PageTransition'
 import InitialAnimation from '../components/InitialAnimation'
@@ -9,27 +9,28 @@ import InitialAnimation from '../components/InitialAnimation'
 
 function MyApp({ Component, pageProps }) {
 
+  // Router
+  var router = useRouter()
+
   // Page Transition
-  var [loading, setLoading] = useState(null)
+  var [loading, setLoading] = useState(false)
 
   // Root Inital Page Transition
-  var [rootPath, setRootPath] = useState(0)
+  var [onRoot, setRoot] = useState(router.pathname === "/")
+  var [counter, setCounter] = useState(0)
 
 
   Router.events.on('routeChangeStart', () => {
     // Untuk memastikan hanya muncul di root dan awal page
-    if (rootPath == 0 && Router.pathname === "/") {
-      setRootPath(rootPath + 1)
-    }
+    setCounter(counter + 1)
+    setRoot(false)
     setLoading(true)
-
   })
 
   Router.events.on('routeChangeComplete', () => {
-    if (loading != null) {
+    if (!loading) {
       setTimeout(() => { setLoading(false) }, 1000)
     }
-    console.log(Router.pathname)
   })
 
 
@@ -42,15 +43,13 @@ function MyApp({ Component, pageProps }) {
           <motion.div
             className="sticky top-0 z-0"
             initial={{
-              scale: 0.3,
               opacity: 0
             }}
             animate={{
-              scale: 1,
               opacity: 1
             }}
             exit={{
-              scale: 0.3,
+
               opacity: 0
             }}
             transition={{ easings: "linear" }}
@@ -60,8 +59,20 @@ function MyApp({ Component, pageProps }) {
           </motion.div>
         }
       </AnimatePresence>
-      <InitialAnimation activate="true"/>
-      <PageTransition load={loading} activate="true"/>
+
+      {
+        onRoot &&
+        <InitialAnimation activate="true"/>
+      }
+
+      {
+        counter==0 ?
+        <PageTransition activate="true" load={loading} display="false"/>
+        :
+        <PageTransition activate="true" load={loading} display="true"/>
+      }
+
+
     </>
   )
 }

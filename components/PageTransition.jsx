@@ -37,8 +37,8 @@ const config = {
 function PageTransition(props) {
 
   return (
-    props.activate ? ( props.load != null &&
-    <motion.div className={config.tailwindClass}
+    props.activate=="true" ? (
+    <motion.div className={props.display=="true" ? (config.tailwindClass) : (config.tailwindClass + " hidden")}
         initial="initial"
         animate="animate"
         transition="transition"
