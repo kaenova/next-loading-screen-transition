@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 
 
 const config = {
-  tailwindClass: "fixed w-screen h-screen bg-gray-400 z-40 flex justify-center items-center",
+  tailwindClass: "fixed top-0 w-screen h-screen bg-gray-400 z-40 flex justify-center items-center",
 
   motion: {
     motionVariantsOut: {
@@ -37,6 +37,7 @@ const config = {
 function PageTransition(props) {
 
   return (
+    props.activate ? ( props.load != null &&
     <motion.div className={config.tailwindClass}
         initial="initial"
         animate="animate"
@@ -45,6 +46,10 @@ function PageTransition(props) {
       >
         <BounceLoader />
     </motion.div>
+    )
+    :
+    <>
+    </>
   )
 }
 
